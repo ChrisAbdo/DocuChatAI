@@ -17,10 +17,12 @@ import { Input } from "@/components/ui/input";
 import ExamplePrompts from "@/components/chat/example-prompts";
 import { Button } from "@/components/ui/button";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
-).toString();
+if (typeof window !== "undefined") {
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/build/pdf.worker.min.js",
+    import.meta.url
+  ).toString();
+}
 
 const options = {
   cMapUrl: "/cmaps/",
@@ -118,19 +120,21 @@ export default function Sample() {
                     Remove PDF
                   </Button>
                 </div>
-                <Document
-                  file={file}
-                  onLoadSuccess={onDocumentLoadSuccess}
-                  options={options}
-                >
-                  {Array.from(new Array(numPages), (el, index) => (
-                    <Page
-                      key={`page_${index + 1}`}
-                      pageNumber={index + 1}
-                      className="w-full"
-                    />
-                  ))}
-                </Document>
+                {file && (
+                  <Document
+                    file={file}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    options={options}
+                  >
+                    {Array.from(new Array(numPages), (el, index) => (
+                      <Page
+                        key={`page_${index + 1}`}
+                        pageNumber={index + 1}
+                        className="w-full"
+                      />
+                    ))}
+                  </Document>
+                )}
               </div>
             ) : (
               <div className="max-w-3xl mx-auto">
