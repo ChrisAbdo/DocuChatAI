@@ -20,6 +20,7 @@ export interface PromptProps
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   text: string;
+  setText: (value: string) => void;
 }
 
 export function ChatInput({
@@ -27,6 +28,7 @@ export function ChatInput({
   handleSubmit,
   handleInputChange,
   text,
+  setText,
   input,
   setInput,
   isLoading,
@@ -41,9 +43,15 @@ export function ChatInput({
     }
   }, []);
 
+  React.useEffect(() => {
+    if (input === "") {
+      setText("");
+    }
+  }, [input]);
+
   return (
     <div className="fixed w-1/2 inset-x-1/2 bottom-0 bg-gradient-to-b from-muted/10 from-10% to-muted/30 to-50%">
-      <form onSubmit={handleSubmit} ref={formRef}>
+      <form id="chat-form" onSubmit={handleSubmit} ref={formRef}>
         <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-background px-8 sm:border-t sm:px-12">
           <button
             onClick={(e) => {
@@ -65,7 +73,8 @@ export function ChatInput({
             tabIndex={0}
             onKeyDown={onKeyDown}
             rows={1}
-            value={input}
+            // value={text || input}
+            defaultValue={text || input}
             //   @ts-ignore
             onChange={handleInputChange}
             placeholder="Send a message."
@@ -74,6 +83,7 @@ export function ChatInput({
           />
           <div className="absolute right-0 top-4 sm:right-4">
             <Button
+              id="send-message"
               type="submit"
               size="icon"
               disabled={isLoading || input === ""}

@@ -87,13 +87,26 @@ export default function Sample() {
         )
         .join("\n");
 
+      const initialPrompt =
+        "The following is the content of a PDF: " + extractedText;
+
+      setText("The following is the content of a PDF:" + initialPrompt);
+
+      handleInputChange({
+        // @ts-ignore
+        target: {
+          value: initialPrompt,
+        },
+      });
+
       console.log(extractedText);
-      setText(extractedText);
+      setText(initialPrompt);
       setNumPages(pdfDocument.numPages);
 
       toast({
         title: "PDF successfully loaded!",
-        description: "Text also successfully extracted!",
+        description:
+          "The first prompt has been generated for you. Make any changes you see necessary. This will just begin the conversation with the information from the PDF.",
       });
     } catch (error) {
       console.error("Error extracting text from PDF:", error);
@@ -257,6 +270,7 @@ export default function Sample() {
               input={input}
               setInput={setText}
               text={text}
+              setText={setText}
               handleInputChange={handleInputChange}
               isLoading={false}
             />
