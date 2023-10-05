@@ -19,12 +19,14 @@ export interface PromptProps
   isLoading: boolean;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  text: string;
 }
 
 export function ChatInput({
   onSubmit,
   handleSubmit,
   handleInputChange,
+  text,
   input,
   setInput,
   isLoading,

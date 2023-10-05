@@ -16,6 +16,8 @@ import { FileTextIcon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
 import ExamplePrompts from "@/components/chat/example-prompts";
 import { Button } from "@/components/ui/button";
+import TopBar from "@/components/pdf-panel/top-bar";
+import { useToast } from "@/components/ui/use-toast";
 
 if (typeof window !== "undefined") {
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -33,6 +35,7 @@ type PDFFile = string | File | null;
 
 export default function Sample() {
   const { messages, input, handleInputChange, handleSubmit, data } = useChat();
+  const { toast } = useToast();
 
   const [file, setFile] = useState<PDFFile>(null);
   const [text, setText] = useState<string>("");
@@ -52,6 +55,11 @@ export default function Sample() {
   function removeFile(): void {
     setFile(null);
     setSelected(false);
+    toast({
+      variant: "destructive",
+      title: "Removed PDF",
+      description: "Your data does not persist!",
+    });
   }
 
   async function onDocumentLoadSuccess(
@@ -80,15 +88,20 @@ export default function Sample() {
         .join("\n");
 
       console.log(extractedText);
-      setText(extractedText); // Setting the extracted text to the state
+      setText(extractedText);
       setNumPages(pdfDocument.numPages);
+
+      toast({
+        title: "PDF successfully loaded!",
+        description: "Text also successfully extracted!",
+      });
     } catch (error) {
       console.error("Error extracting text from PDF:", error);
     }
   }
 
   return (
-    <div className="">
+    <>
       <div className="flex">
         <div className="w-1/2 overflow-auto h-screen border-r">
           {!selected ? (
@@ -111,15 +124,12 @@ export default function Sample() {
               </div>
             </div>
           ) : null}
+
+          {file ? <TopBar removeFile={removeFile} /> : null}
+
           <div className="mt-12">
             {file ? (
               <div className="flex flex-col items-center mb-16">
-                <div className="flex">
-                  <Button onClick={removeFile} className="mb-4">
-                    <TrashIcon />
-                    Remove PDF
-                  </Button>
-                </div>
                 {file && (
                   <Document
                     file={file}
@@ -245,13 +255,14 @@ export default function Sample() {
             <ChatInput
               handleSubmit={handleSubmit}
               input={input}
-              // setInput={handleInputChange}
+              setInput={setText}
+              text={text}
               handleInputChange={handleInputChange}
               isLoading={false}
             />
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
